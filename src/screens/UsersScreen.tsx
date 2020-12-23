@@ -43,15 +43,19 @@ const UsersScreen: FC<Props> = ({
     getUsers();
   }, []);
 
-  if (loadingUsers) return <ActivityIndicator size="large" color="gold" />;
+  console.log('mi error', errorUsers);
 
-  if (errorUsers !== null) return <Text>NO EXISTE USUARIOS</Text>;
+  if (errorUsers !== null)
+    return <Text>Error al obtener usuarios intentalo mas tarde</Text>;
+
+  if (users?.length === 0) return <Text>No existen usuarios</Text>;
 
   return (
     <>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Lista de Usuarios</Text>
       </View>
+      {!loadingUsers ? null : <ActivityIndicator size="large" color="gold" />}
       <FlatList
         data={users}
         keyExtractor={(user) => user.id.toString()}
@@ -67,12 +71,10 @@ const UsersScreen: FC<Props> = ({
 
 const styles = StyleSheet.create({
   titleContainer: {
-    marginVertical: 20,
-    justifyContent: 'center',
+    marginVertical: 10,
     alignItems: 'center',
   },
   title: {
-    color: 'gold',
     fontSize: 30,
   },
 });

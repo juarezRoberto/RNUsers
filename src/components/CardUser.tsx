@@ -26,7 +26,7 @@ const CardUser: FC<Props> = ({ name, username, user }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'gray',
+    backgroundColor: '#B0BEC5',
     borderRadius: 10,
     margin: 10,
     padding: 10,
