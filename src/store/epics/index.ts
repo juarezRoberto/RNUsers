@@ -6,8 +6,14 @@ import {
   usersEpics$,
 } from './users.epic';
 
-type AllInputActions = UsersInputActions;
-type AllOutputActions = UsersOutputActions;
+import {
+  AlbumsInputActions,
+  AlbumsOutputActions,
+  albumsEpics$,
+} from './albums.epics';
+
+type AllInputActions = UsersInputActions | AlbumsInputActions;
+type AllOutputActions = UsersOutputActions | AlbumsOutputActions;
 
 export const epicMiddleware = createEpicMiddleware<
   AllInputActions,
@@ -15,4 +21,4 @@ export const epicMiddleware = createEpicMiddleware<
   RootState
 >();
 
-export const rootEpic$ = combineEpics(usersEpics$);
+export const rootEpic$ = combineEpics(usersEpics$, albumsEpics$);

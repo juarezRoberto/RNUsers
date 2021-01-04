@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableOpacity,
 } from 'react-native';
 import { RootState } from '../store/reducers';
 import { connect, ConnectedProps } from 'react-redux';
@@ -15,6 +16,7 @@ import {
   selectUsersLoading,
 } from '../store/selectors/users.selectors';
 import CardUser from '../components/CardUser';
+import { Actions } from 'react-native-router-flux';
 
 // connect permite conectar un componente con el store recibe 2 param
 // mapStatetoProps obtiene un estado del store
@@ -25,25 +27,17 @@ const conector = connect(
     loadingUsers: selectUsersLoading(state),
     errorUsers: selectUsersError(state),
   }),
-  {
-    getUsers: () => getUsers(),
-  },
+  {},
 );
 
 //definir constante conector como tipo para que reconozca sus propiedades
 type Props = ConnectedProps<typeof conector>;
 
-const UsersScreen: FC<Props> = ({
-  getUsers,
-  users,
-  loadingUsers,
-  errorUsers,
-}) => {
-  useEffect(() => {
-    getUsers();
-  }, []);
-
-  console.log('mi error', errorUsers);
+const UsersScreen: FC<Props> = ({ users, loadingUsers, errorUsers }) => {
+  // ejecutar action el iniciar la app
+  // useEffect(() => {
+  //   getUsers();
+  // }, []);
 
   if (errorUsers !== null)
     return <Text>Error al obtener usuarios intentalo mas tarde</Text>;
@@ -61,7 +55,10 @@ const UsersScreen: FC<Props> = ({
         keyExtractor={(user) => user.id.toString()}
         renderItem={({ item }) => {
           return (
-            <CardUser user={item} name={item.name} username={item.username} />
+            <TouchableOpacity
+              onPress={() => Actions.groupAlbum({ userId: item.id })}>
+              <CardUser user={item} name={item.name} username={item.username} />
+            </TouchableOpacity>
           );
         }}
       />

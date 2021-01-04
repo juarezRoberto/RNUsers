@@ -1,7 +1,9 @@
 import { combineEpics, Epic } from 'redux-observable';
 import { of } from 'rxjs';
-import { catchError, filter, map, switchMap } from 'rxjs/operators';
-import { getUsersAPI } from '../../api/users.api';
+import { catchError, filter, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { getUsersAPI } from '../../api/jsonplaceholder.api';
+import { Actions } from 'react-native-router-flux';
+
 import {
   getUsers,
   GetUsers,
@@ -10,6 +12,7 @@ import {
   getUsersSuccess,
   GetUsersSuccess,
 } from '../actions/users.actions';
+import { noopAction, NoopAction } from '../actions/shared.actions';
 
 type GetUsersOutputActions = GetUsersSuccess | GetUsersError;
 type GetUsersInputActions = GetUsers | GetUsersOutputActions;
@@ -27,7 +30,24 @@ const getUsersEpic$: Epic<GetUsersInputActions, GetUsersOutputActions> = (
     ),
   );
 
+type GetUsersSuccessOutputActions = NoopAction;
+type GetUsersSuccessInputActions =
+  | GetUsersSuccess
+  | GetUsersSuccessOutputActions;
+
+const getUsersSuccessEpic$: Epic<
+  GetUsersSuccessInputActions,
+  GetUsersSuccessOutputActions
+> = (actions$) =>
+  actions$.pipe(
+    filter(getUsersSuccess.match),
+    tap(() => {
+      Actions.groupUsers();
+    }),
+    mapTo(noopAction()),
+  );
+
 export type UsersInputActions = GetUsersInputActions;
 export type UsersOutputActions = GetUsersOutputActions;
 
-export const usersEpics$ = combineEpics(getUsersEpic$);
+export const usersEpics$ = combineEpics(getUsersEpic$, getUsersSuccessEpic$);
